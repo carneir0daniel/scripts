@@ -1,0 +1,33 @@
+// This script read the names from the spreadsheet Users.csv on the Google Drive and adds them as users
+
+function logUsers() {
+  // Spreadsheet ID from Google Drive
+  const spreadsheetId = '1w9TYhbTvVxcQ8Os94vi6ilIU14fOmRb3tQhKH-fK03w';
+  // Row and columns to pull data from
+  const rangeName = 'A1:D9';
+  try {
+    // Get the values from the spreadsheet using spreadsheetId and range.
+    const values = Sheets.Spreadsheets.Values.get(spreadsheetId, rangeName).values;
+    //  Print the values from spreadsheet if values are available.
+    if (!values) {
+      console.log('No data found.');
+      return;
+    }
+    // For each iteration, adds an user
+    for (const row in values) {
+      let user = {
+        primaryEmail: values[row][2],
+          name: {
+            givenName: values[row][0],
+            familyName: values[row][1]
+    },
+        // Generates random password
+        password: Math.random().toString(36)
+  };
+    AdminDirectory.Users.insert(user);
+    console.log('%s, %s, %s, %s', values[row][0], values[row][1], values[row][2], values[row][3]);
+    }
+  } catch (err) {
+    console.log(err.message);
+  }
+}
